@@ -106,6 +106,7 @@ class ODEBlock(nn.Module):
 
     def forward(self, x):
         self.integration_time = self.integration_time.type_as(x)
+        print(self.integration_time)
         out = odeint(self.odefunc, x, self.integration_time, rtol=args.tol, atol=args.tol)
         return out[1]
 
@@ -355,8 +356,8 @@ if __name__ == '__main__':
                     best_acc = val_acc
                 logger.info(
                     "Epoch {:04d} | Time {:.3f} ({:.3f}) | NFE-F {:.1f} | NFE-B {:.1f} | "
-                    "Train Acc {:.4f} | Test Acc {:.4f}".format(
+                    "Train Acc {:.4f} | Test Acc {:.4f} | t0 {} | t1 {}".format(
                         itr // batches_per_epoch, batch_time_meter.val, batch_time_meter.avg, f_nfe_meter.avg,
-                        b_nfe_meter.avg, train_acc, val_acc
+                        b_nfe_meter.avg, train_acc, val_acc, model.
                     )
                 )
