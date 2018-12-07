@@ -289,6 +289,8 @@ if __name__ == '__main__':
     fc_layers = [norm(64), nn.ReLU(inplace=True), nn.AdaptiveAvgPool2d((1, 1)), Flatten(), nn.Linear(64, 10)]
 
     model = nn.Sequential(*downsampling_layers, *feature_layers, *fc_layers).to(device)
+    model.load_state_dict(torch.load('experiment1/model.pth', map_location='cpu')['state_dict'])
+    #model.eval()
 
     logger.info(model)
     logger.info('Number of parameters: {}'.format(count_parameters(model)))
@@ -331,8 +333,8 @@ if __name__ == '__main__':
             nfe_forward = feature_layers[0].nfe
             feature_layers[0].nfe = 0
 
-        loss.backward()
-        optimizer.step()
+        #loss.backward()
+        #optimizer.step()
 
         if is_odenet:
             nfe_backward = feature_layers[0].nfe
