@@ -42,7 +42,8 @@ with torch.no_grad():
 
 
 def get_batch():
-    s = torch.from_numpy(np.random.choice(np.arange(args.data_size - args.batch_time), args.batch_size, replace=False))
+                                                        # I change to only allow to see the T/2 timesteps during training
+    s = torch.from_numpy(np.random.choice(np.arange(int(args.data_size/10) - args.batch_time), args.batch_size, replace=False))
     batch_y0 = true_y[s]  # (M, D)
     batch_t = t[:args.batch_time]  # (T)
     batch_y = torch.stack([true_y[s + i] for i in range(args.batch_time)], dim=0)  # (T, M, D)
@@ -113,16 +114,17 @@ class ODEFunc(nn.Module):
     def __init__(self):
         super(ODEFunc, self).__init__()
 
-        self.net = nn.Sequential(
-            nn.Linear(2, 50),
-            nn.ReLU(),
-            nn.Linear(50, 50),
-            nn.ReLU(),
-            nn.Linear(50, 50),
-            nn.Tanh(),
-            nn.Linear(50, 2),
-        )
-        #self.est_A = nn.Parameter(torch.tensor([[0., .0], [.0, .0]]))
+        #self.net = nn.Sequential(
+        #    nn.Linear(2, 50),
+        #    nn.ReLU(),
+        #    nn.Linear(50, 50),
+        #    nn.ReLU(),
+        #    nn.Linear(50, 50),
+        #    nn.Tanh(),
+        #    nn.Linear(50, 2),
+        #)
+        self.est_A = nn.Parameter(torch.tensor([[0., .0], [.0, .0]]))
+        self.power = nn.Parameter(torch.tensor([0.]))
         #self.net = nn.Sequential(
         #    nn.Linear(2, 2)
         #)
@@ -134,10 +136,10 @@ class ODEFunc(nn.Module):
 
     def forward(self, t, y):
         #return self.net(y**3)
-        return self.net(y)
+        #return self.net(y)
         #print(y.shape, t)
         #print()
-        #return torch.matmul(y**3, self.est_A)
+        return torch.matmul(y**self.power, self.est_A)
 
 
 class RunningAverageMeter(object):
