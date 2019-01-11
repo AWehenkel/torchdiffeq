@@ -124,7 +124,7 @@ class ODEFunc(nn.Module):
         #    nn.Linear(50, 2),
         #)
         self.est_A = nn.Parameter(torch.tensor([[0., .0], [.0, .0]]))
-        self.power = nn.Parameter(torch.tensor([0.]))
+        self.power = nn.Parameter(torch.tensor([1.]))
         #self.net = nn.Sequential(
         #    nn.Linear(2, 2)
         #)
